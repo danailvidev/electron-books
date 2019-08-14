@@ -12,7 +12,7 @@ export class AppComponent {
 
   constructor(private fileService: FileService) { }
 
-  getFiles() {
+  getBooks() {
     this.fileService.getFiles().then(x => console.log(x));
   }
 }
