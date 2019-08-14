@@ -7,6 +7,9 @@
 # Only exists if Bazel was run
 /bazel-out
 
+credentials.json
+token.json
+
 # dependencies
 /node_modules
 
