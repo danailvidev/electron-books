@@ -1,10 +1,18 @@
 import { Component } from '@angular/core';
 
+import { FileService } from './file.service';
+
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  title = 'electron-books';
+  message: string;
+
+  constructor(private fileService: FileService) { }
+
+  getFiles() {
+    this.fileService.getFiles().then(x => console.log(x));
+  }
 }
