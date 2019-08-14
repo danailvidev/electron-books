@@ -1,6 +1,7 @@
-import { app, BrowserWindow } from 'electron';
+import { app, BrowserWindow, ipcMain } from 'electron';
 import * as path from 'path';
 import * as url from 'url';
+var fs = require('fs');
 
 let win: BrowserWindow;
 
@@ -12,8 +13,20 @@ app.on('activate', () => {
   }
 });
 
+ipcMain.on('getFiles', (event, arg) => {
+  const files = fs.readdirSync(__dirname);
+  win.webContents.send('getFilesResponse', files);
+});
+
 function createWindow() {
-  win = new BrowserWindow({ width: 800, height: 600 });
+  win = new BrowserWindow({
+    width: 800,
+    height: 600,
+    webPreferences: {
+      nodeIntegration: true,
+      backgroundThrottling: false
+    }
+  });
 
   win.loadURL(
     url.format({
