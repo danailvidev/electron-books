@@ -5,18 +5,10 @@ const fs = require('fs');
 const readline = require('readline');
 const { google } = require('googleapis');
 
+let win: BrowserWindow;
+
 const SCOPES = ['https://www.googleapis.com/auth/drive.metadata.readonly'];
-
 const TOKEN_PATH = 'token.json';
-
-
-
-// Load client secrets from a local file.
-fs.readFile('./credentials.json', (err, content) => {
-  if (err) return console.log('Error loading client secret file:', err);
-  // Authorize a client with credentials, then call the Google Drive API.
-  authorize(JSON.parse(content), listFiles);
-});
 
 /**
  * Create an OAuth2 client with the given credentials, and then execute the
@@ -81,17 +73,15 @@ function listFiles(auth) {
     if (err) return console.log('The API returned an error: ' + err);
     const files = res.data.files;
     if (files.length) {
-      console.log('Files:');
-      files.map((file) => {
-        console.log(`${file.name} (${file.id})`);
-      });
+      // files.map((file) => {
+      //   console.log(`${file.name} (${file.id})`);
+      // });
+      win.webContents.send('getFilesResponse', files);
     } else {
       console.log('No files found.');
     }
   });
 }
-
-let win: BrowserWindow;
 
 app.on('ready', createWindow);
 
@@ -103,7 +93,12 @@ app.on('activate', () => {
 
 ipcMain.on('getFiles', (event, arg) => {
   const files = fs.readdirSync(__dirname);
-  win.webContents.send('getFilesResponse', files);
+  // Load client secrets from a local file.
+  fs.readFile('./credentials.json', (err, content) => {
+    if (err) return console.log('Error loading client secret file:', err);
+    // Authorize a client with credentials, then call the Google Drive API.
+    authorize(JSON.parse(content), listFiles);
+  });
 });
 
 function createWindow() {
